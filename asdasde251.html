@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#000000" />
+    <title>Umer's Portfolio</title>
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23111111'/%3E%3Ctext x='32' y='45' font-size='38' font-family='Arial,sans-serif' font-weight='bold' fill='%2300CFFF' text-anchor='middle'%3EU%3C/text%3E%3C/svg%3E">
+    <style>
+        /* ============ MAIN STYLES ============ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            font-family: sans-serif;
+            background-color: #111;
+            color: white;
+            height: 100%;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            overflow-wrap: break-word;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        /* mobile safety: media never forces horizontal scrolling */
+        img,
+        video,
+        iframe,
+        embed {
+            max-width: 100%;
+        }
+
+        /* mobile: removes double-tap zoom delay on links & buttons */
+        a,
+        button {
+            touch-action: manipulation;
+        }
+
+        header {
+            height: 80px;
+            background-color: black;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .branding {
+            display: flex;
+            gap: 0;
+            font-size: 2.8rem;
+        }
+
+        .branding .hybrid {
+            color: white;
+        }
+
+        .branding .creator {
+            color: grey;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+
+        /* ============ HERO — SPLIT IDENTITY ============ */
+        .hero {
+            --split: 50;
+            position: relative;
+            display: flex;
+            height: calc(100vh - 160px);
+            min-height: 520px;
+            overflow: hidden;
+            background: #07070d;
+        }
+
+        .panel {
+            position: relative;
+            height: 100%;
+            overflow: hidden;
+            transition: width 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hero.dragging .panel,
+        .hero.dragging .divider {
+            transition: none;
+        }
+
+        .panel-left {
+            width: calc(var(--split) * 1%);
+            background: linear-gradient(140deg, #1b0b2e 0%, #3b1358 55%, #6d1e73 100%);
+        }
+
+        .panel-right {
+            width: calc((100 - var(--split)) * 1%);
+            background: linear-gradient(140deg, #03131f 0%, #073650 55%, #0b6a91 100%);
+        }
+
+        /* decorative art layer */
+        .art {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.55;
+            animation: blobFloat 9s ease-in-out infinite alternate;
+        }
+
+        .panel-left .b1 {
+            width: 320px;
+            height: 320px;
+            background: #ff3ea5;
+            top: -80px;
+            left: -60px;
+        }
+
+        .panel-left .b2 {
+            width: 260px;
+            height: 260px;
+            background: #7a5cff;
+            bottom: -70px;
+            right: -50px;
+            animation-delay: -4s;
+        }
+
+        .panel-right .b1 {
+            width: 320px;
+            height: 320px;
+            background: #00cfff;
+            top: -80px;
+            right: -60px;
+        }
+
+        .panel-right .b2 {
+            width: 260px;
+            height: 260px;
+            background: #00ff9d;
+            bottom: -70px;
+            left: -50px;
+            animation-delay: -4s;
+        }
+
+        @keyframes blobFloat {
+            from {
+                transform: translate(0, 0) scale(1);
+            }
+
+            to {
+                transform: translate(40px, 30px) scale(1.15);
+            }
+        }
+
+        .grid-lines {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 44px 44px;
+            -webkit-mask-image: radial-gradient(circle at 50% 40%, black 0%, transparent 78%);
+            mask-image: radial-gradient(circle at 50% 40%, black 0%, transparent 78%);
+        }
+
+        .panel-tag {
+            position: absolute;
+            top: 22px;
+            z-index: 3;
+            font-family: 'Courier New', monospace;
+            font-size: 0.68rem;
+            letter-spacing: 0.22em;
+            color: rgba(255, 255, 255, 0.55);
+        }
+
+        .panel-left .panel-tag {
+            left: 26px;
+        }
+
+        .panel-right .panel-tag {
+            right: 26px;
+        }
+
+        .panel-core {
+            position: absolute;
+            bottom: 34px;
+            z-index: 3;
+            max-width: 340px;
+            transition: transform 0.5s ease;
+        }
+
+        .panel-left .panel-core {
+            left: 34px;
+            text-align: left;
+        }
+
+        .panel-right .panel-core {
+            right: 34px;
+            text-align: right;
+        }
+
+        .panel-emoji {
+            display: block;
+            font-size: 2.4rem;
+            margin-bottom: 6px;
+            filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.45));
+        }
+
+        .panel-core h2 {
+            font-size: clamp(1.7rem, 3vw, 2.6rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #fff;
+            text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
+        }
+
+        .panel-core p {
+            margin-top: 6px;
+            font-size: 0.82rem;
+            letter-spacing: 0.12em;
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        /* floating tool chips */
+        .chips {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            list-style: none;
+            pointer-events: none;
+        }
+
+        .chip {
+            position: absolute;
+            padding: 7px 15px;
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            border-radius: 999px;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            opacity: 0.5;
+            animation: chipFloat 6s ease-in-out infinite alternate;
+            transition: opacity 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+        }
+
+        .panel:hover .chip {
+            opacity: 1;
+        }
+
+        .panel-left:hover .chip {
+            border-color: rgba(255, 110, 200, 0.85);
+            box-shadow: 0 0 18px rgba(255, 62, 165, 0.35);
+        }
+
+        .panel-right:hover .chip {
+            border-color: rgba(0, 207, 255, 0.85);
+            box-shadow: 0 0 18px rgba(0, 207, 255, 0.35);
+        }
+
+        @keyframes chipFloat {
+            from {
+                transform: translateY(-8px);
+            }
+
+            to {
+                transform: translateY(10px);
+            }
+        }
+
+        .chip.c1 {
+            top: 16%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .chip.c2 {
+            top: 26%;
+            right: 12%;
+            animation-delay: -1.4s;
+        }
+
+        .chip.c3 {
+            top: 45%;
+            left: 7%;
+            animation-delay: -2.6s;
+        }
+
+        .chip.c4 {
+            top: 57%;
+            right: 9%;
+            animation-delay: -3.8s;
+        }
+
+        .chip.c5 {
+            top: 71%;
+            left: 20%;
+            animation-delay: -5s;
+        }
+
+        /* center scrim so the headline stays readable over both panels */
+        .hero-scrim {
+            position: absolute;
+            inset: 0;
+            z-index: 4;
+            pointer-events: none;
+            background: radial-gradient(ellipse 60% 55% at 50% 50%, rgba(4, 4, 10, 0.78) 0%, rgba(4, 4, 10, 0.35) 55%, transparent 80%);
+        }
+
+
+        /* headline block */
+        .hero-content {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 24px;
+            pointer-events: none;
+            animation: heroIn 0.9s ease both;
+        }
+
+        @keyframes heroIn {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content .eyebrow {
+            font-family: 'Courier New', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.35em;
+            color: #ffd166;
+            margin-bottom: 14px;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(2.4rem, 6vw, 4.6rem);
+            font-weight: 800;
+            line-height: 1.02;
+            color: #fff;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
+            margin-bottom: 12px;
+        }
+
+        .hero-content h1 span {
+            color: #00cfff;
+        }
+
+        .hero-content .tagline {
+            font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+            color: rgba(255, 255, 255, 0.88);
+            text-shadow: 0 2px 14px rgba(0, 0, 0, 0.8);
+            margin-bottom: 30px;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            pointer-events: auto;
+        }
+
+        .btn {
+            padding: 13px 30px;
+            border-radius: 999px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-decoration: none;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, color 0.25s ease;
+        }
+
+        .btn-solid {
+            background: #00cfff;
+            color: #04121b;
+            box-shadow: 0 0 26px rgba(0, 207, 255, 0.45);
+        }
+
+        .btn-solid:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 40px rgba(0, 207, 255, 0.75);
+        }
+
+        .btn-ghost {
+            border: 1.5px solid rgba(255, 255, 255, 0.75);
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .btn-ghost:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 6;
+            font-family: 'Courier New', monospace;
+            font-size: 0.62rem;
+            letter-spacing: 0.3em;
+            color: rgba(255, 255, 255, 0.55);
+            pointer-events: none;
+            animation: hintBob 1.8s ease-in-out infinite;
+        }
+
+        @keyframes hintBob {
+
+            0%,
+            100% {
+                transform: translate(-50%, 0);
+            }
+
+            50% {
+                transform: translate(-50%, 7px);
+            }
+        }
+
+        /* stacked layout for tablets & phones */
+        @media (max-width: 768px) {
+            .hero {
+                flex-direction: column;
+                height: auto;
+                min-height: 0;
+            }
+
+            .panel-left,
+            .panel-right {
+                width: 100% !important;
+                height: 38vh;
+                min-height: 250px;
+            }
+
+            .divider,
+            .scroll-hint,
+            .hero-scrim {
+                display: none;
+            }
+
+            .hero-content {
+                position: static;
+                order: -1;
+                padding: 54px 20px 42px;
+                background: #07070d;
+                animation: none;
+            }
+
+            .panel-core {
+                max-width: 78%;
+            }
+        }
+
+        /* avatar / emoji / broken-image fallbacks */
+        .avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00cfff, #00ff9d);
+            color: #04121b;
+            font-size: 0.72rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .about-emoji {
+            font-size: 2.6rem;
+            line-height: 1;
+            flex-shrink: 0;
+            filter: drop-shadow(0 0 16px rgba(0, 204, 255, 0.55));
+        }
+
+        .img-ph {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 14px;
+            font-size: 0.82rem;
+            letter-spacing: 0.06em;
+            color: #9fb4c0;
+            background: repeating-linear-gradient(45deg, #16161f, #16161f 14px, #111119 14px, #111119 28px);
+            border: 1px dashed rgba(255, 255, 255, 0.28);
+            border-radius: 8px;
+            box-shadow: 0 0 60px rgba(255, 0, 0, 0.18);
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            background: black;
+            padding: 10px 0;
+            gap: 40px;
+            border-top: 4px solid rgb(0, 0, 0);
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: grey;
+            transform: scale(1.1);
+        }
+
+        section {
+            padding: 80px 40px;
+            min-height: 100vh;
+            border-bottom: 1px solid #444;
+        }
+
+        section h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        /* === About Section Styling === */
+        #about {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 60px 30px;
+            color: rgb(0, 204, 255);
+            font-size: 1.1rem;
+            line-height: 1.9;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(248, 248, 248, 0.1);
+            margin-top: 60px;
+            text-shadow: 0 0 0 rgba(21, 255, 0, 0);
+        }
+
+        #about h2 {
+            font-size: 2.5rem;
+            color: rgb(255, 255, 255);
+            margin-bottom: 40px;
+
+        }
+
+        #about p {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .about-toggle {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .about-toggle button {
+            background: transparent;
+            border: 2px solid rgb(0, 204, 255);
+            color: rgb(0, 204, 255);
+            padding: 8px 16px;
+            margin: 0 10px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 0 16px rgb(0, 204, 255);
+        }
+
+        .about-toggle button.active {
+            background: rgb(0, 204, 255);
+            color: black;
+        }
+
+        .about-toggle button:hover {
+            transform: scale(1.1);
+        }
+
+        .about-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 0.6s ease;
+            /* REMOVE absolute positioning */
+            position: relative;
+            top: auto;
+            left: auto;
+            right: auto;
+        }
+
+        .about-content.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .about-img {
+            width: 100px;
+            border-radius: 112px;
+        }
+
+        /* === Project Gallery Styling === */
+        .project-gallery {
+            color: white;
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .project-gallery h3 {
+            margin: 40px 0 20px;
+            color: white;
+            text-shadow: 0 0 6px white;
+        }
+
+        /* Floating Glassmorphism Overlay */
+        .portfolio-archive-overlay {
+            position: fixed;
+            bottom: 24px;
+            /* Floats at the bottom right corner */
+            right: 24px;
+            max-width: 420px;
+            width: calc(100% - 48px);
+            /* Responsive sizing for mobile screens */
+
+            /* Glassmorphism Effect */
+            background: rgba(255, 255, 255, 0.45);
+            /* Translucent white background */
+            backdrop-filter: blur(12px);
+            /* Smooth background blur */
+            -webkit-backdrop-filter: blur(12px);
+            /* Safari support */
+
+            /* Elegant Borders & Shadows */
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
+
+            padding: 18px 24px;
+            z-index: 999999;
+            /* Ensures it floats above absolutely everything */
+            box-sizing: border-box;
+            animation: fadeInFloating 0.6s ease-out;
+        }
+
+        /* Internal Layout */
+        .portfolio-archive-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        /* Icon Styling */
+        .portfolio-archive-icon {
+            font-size: 18px;
+            line-height: 1;
+            color: #4a4a4a;
+            /* Minimalist dark gray accent */
+            margin-top: 2px;
+        }
+
+        /* Formal Text Typography */
+        .portfolio-archive-text {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #2c2c2c;
+            /* Highly readable contrast text */
+            letter-spacing: -0.1px;
+        }
+
+        .portfolio-archive-text strong {
+            color: #000000;
+            font-weight: 600;
+        }
+
+        /* Subtle fade-in entrance animation */
+        @keyframes fadeInFloating {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Dark Mode Adaptation (Optional: Matches system preferences automatically) */
+        @media (prefers-color-scheme: dark) {
+            .portfolio-archive-overlay {
+                background: rgba(20, 20, 20, 0.55);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            }
+
+            .portfolio-archive-icon {
+                color: #b3b3b3;
+            }
+
+            .portfolio-archive-text {
+                color: #e0e0e0;
+            }
+
+            .portfolio-archive-text strong {
+                color: #ffffff;
+            }
+        }
+
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .grid iframe {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border-radius: 20px;
+            box-shadow: 0 0 112px rgb(255, 0, 0);
+            transition: transform 0.3s ease;
+            border: none;
+        }
+
+        .grid iframe:hover {
+            transform: scale(1.03);
+        }
+
+        .grid img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 0 110px rgb(255, 0, 0);
+            transition: transform 0.3s ease;
+            object-fit: cover;
+        }
+
+        .grid img:hover {
+            transform: scale(1.1);
+        }
+
+
+
+        .support-category {
+            margin-bottom: 40px;
+            text-align: left;
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            box-shadow: 0 0 112px rgb(0, 225, 255);
+        }
+
+        .support-category h3 {
+            color: cyan;
+            margin-bottom: 12px;
+            font-size: 1.4rem;
+        }
+
+        .support-category ul {
+            list-style-type: square;
+            padding-left: 20px;
+        }
+
+        .support-category li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .support-category a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .support-category a:hover {
+            color: cyan;
+        }
+
+        .contact-block {
+            margin-bottom: 30px;
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            box-shadow: 0 0 112px rgb(255, 0, 221);
+        }
+
+        .contact-block h3 {
+            color: cyan;
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+        }
+
+        .contact-block a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .contact-block a:hover {
+            color: cyan;
+        }
+
+        /* 📱 Tablet + Mobile adjustments */
+        @media (max-width: 1024px) {
+            .about-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            nav {
+                flex-wrap: wrap;
+                row-gap: 10px;
+            }
+        }
+
+        /* 📱 Mobile-specific (super small screens like 600px) */
+        @media (max-width: 600px) {
+            #about p {
+                font-size: 15px;
+                line-height: 1.65;
+                text-align: left;
+            }
+        }
+        /* ============================================================
+           📱 MOBILE / RESPONSIVE STABILITY FIXES
+           Keeps the desktop design untouched while making sure phones
+           (320px – 768px) never get horizontal scrolling, overflowing
+           headers/navs, broken grids or sticky hover effects.
+           ============================================================ */
+
+        @media (max-width: 768px) {
+
+            /* --- Header: shrink + wrap instead of overflowing --- */
+            header {
+                height: auto;
+                min-height: 72px;
+                flex-wrap: wrap;
+                row-gap: 6px;
+                justify-content: center;
+                text-align: center;
+                padding: 12px 14px;
+                font-size: 1rem;
+            }
+
+            .branding {
+                font-size: 1.7rem;
+            }
+
+            .profile {
+                gap: 8px;
+            }
+
+            .profile span {
+                font-size: 0.92rem;
+            }
+
+            /* --- All nav bars (main nav + .section-nav):
+                   wrap onto several rows, larger tap targets --- */
+            nav {
+                gap: 8px 18px;
+                padding: 12px 10px;
+                font-size: 0.95rem;
+            }
+
+            nav a {
+                padding: 7px 8px;
+            }
+
+            /* --- Sections: comfortable mobile padding --- */
+            section {
+                padding: 60px 18px;
+            }
+
+            section h2 {
+                font-size: 1.7rem;
+            }
+
+            #about {
+                padding: 40px 16px;
+                margin-top: 30px;
+                border-radius: 8px;
+                font-size: 1rem;
+            }
+
+            #about h2 {
+                font-size: 1.9rem;
+                margin-bottom: 26px;
+            }
+
+            /* --- About toggle: flex row that wraps, big tap targets --- */
+            .about-toggle {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .about-toggle button {
+                margin: 0;
+                padding: 10px 18px;
+                font-size: 1rem;
+            }
+
+            /* --- About content: stack vertically, slide up instead of
+                   sideways (sideways slide caused horizontal scroll) --- */
+            .about-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 16px;
+                transform: translateY(28px);
+            }
+
+            .about-content.show {
+                transform: translateY(0);
+            }
+
+            .about-emoji {
+                font-size: 2.2rem;
+            }
+
+            /* --- Project galleries: never overflow the screen --- */
+            .project-gallery {
+                padding: 20px 0;
+            }
+
+            .grid {
+                gap: 16px;
+                padding: 14px 0;
+            }
+
+            /* --- Supporter / contact cards --- */
+            .support-category,
+            .contact-block {
+                padding: 14px 16px;
+                margin-bottom: 26px;
+            }
+
+            .support-category h3 {
+                font-size: 1.15rem;
+            }
+
+            .contact-block h3 {
+                font-size: 1.1rem;
+            }
+
+            /* --- Floating archival notice: compact bottom bar --- */
+            .portfolio-archive-overlay {
+                left: 10px;
+                right: 10px;
+                bottom: 10px;
+                width: auto;
+                max-width: none;
+                padding: 12px 14px;
+                border-radius: 12px;
+            }
+
+            .portfolio-archive-content {
+                gap: 10px;
+            }
+
+            .portfolio-archive-text {
+                font-size: 12px;
+            }
+
+            /* --- Hero panels: stable height on mobile browsers
+                   (svh = height without the collapsing URL bar) --- */
+            .panel-left,
+            .panel-right {
+                height: 38vh;
+                height: 38svh;
+            }
+
+            .panel-core h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* --- Very small phones (320px – 400px) --- */
+        @media (max-width: 400px) {
+            header {
+                font-size: 0.95rem;
+                padding: 10px;
+            }
+
+            .branding {
+                font-size: 1.4rem;
+            }
+
+            .profile span {
+                font-size: 0.8rem;
+            }
+
+            nav {
+                gap: 4px 10px;
+                font-size: 0.88rem;
+            }
+
+            section {
+                padding: 52px 14px;
+            }
+
+            .hero-content {
+                padding: 44px 16px 34px;
+            }
+
+            .hero-content h1 {
+                font-size: 2.05rem;
+            }
+
+            .hero-content .eyebrow {
+                font-size: 0.62rem;
+                letter-spacing: 0.22em;
+            }
+
+            .btn {
+                padding: 12px 22px;
+                font-size: 0.85rem;
+            }
+
+            .panel-left,
+            .panel-right {
+                min-height: 220px;
+            }
+
+            .about-toggle button {
+                padding: 10px 14px;
+                font-size: 0.92rem;
+            }
+        }
+
+        /* --- Touch devices: hover effects must not "stick" after a tap --- */
+        @media (hover: none) {
+
+            nav a:hover,
+            .btn:hover,
+            .btn-solid:hover,
+            .btn-ghost:hover,
+            .grid img:hover,
+            .grid iframe:hover,
+            .about-toggle button:hover {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="branding">
+            <span class="hybrid">Hybrid</span><span class="creator">Creator</span>
+        </div>
+        <div class="profile">
+            <span>Muhammad Umer Khan</span>
+            <span class="avatar" aria-hidden="true">UK</span>
+        </div>
+    </header>
+
+    <main class="hero" id="hero">
+        <div class="hero-scrim" aria-hidden="true"></div>
+
+        <section class="panel panel-left" id="panel-left" aria-label="Designer side">
+            <div class="art" aria-hidden="true">
+                <span class="blob b1"></span>
+                <span class="blob b2"></span>
+                <span class="grid-lines"></span>
+            </div>
+            <div class="panel-tag">SIDE 01 // THE DESIGNER</div>
+            <ul class="chips">
+                <li class="chip c1">Blender</li>
+                <li class="chip c2">Unreal 5</li>
+                <li class="chip c3">Premiere</li>
+                <li class="chip c4">CapCut</li>
+                <li class="chip c5">Krita</li>
+            </ul>
+            <div class="panel-core">
+                <span class="panel-emoji" aria-hidden="true">🎨</span>
+                <h2>Designer</h2>
+                <p>3D · MOTION · VISUALS</p>
+            </div>
+        </section>
+
+        <section class="panel panel-right" id="panel-right" aria-label="Coder side">
+            <div class="art" aria-hidden="true">
+                <span class="blob b1"></span>
+                <span class="blob b2"></span>
+                <span class="grid-lines"></span>
+            </div>
+            <div class="panel-tag">SIDE 02 // THE CODER</div>
+            <ul class="chips">
+                <li class="chip c1">HTML</li>
+                <li class="chip c2">CSS</li>
+                <li class="chip c3">VS Code</li>
+                <li class="chip c4">Ollama</li>
+                <li class="chip c5">n8n</li>
+            </ul>
+            <div class="panel-core">
+                <span class="panel-emoji" aria-hidden="true">💻</span>
+                <h2>Coder</h2>
+                <p>WEB · PYTHON · AI</p>
+            </div>
+        </section>
+
+        <div class="divider" id="divider">
+            <button type="button" class="divider-handle" id="divider-handle"
+                aria-label="Drag left or right to rebalance the Designer and Coder sides">⇄</button>
+        </div>
+
+        <div class="hero-content">
+            <p class="eyebrow">HYBRID CREATOR — DESIGN × CODE × AI</p>
+            <h1>Muhammad <span>Umer Khan</span></h1>
+            <p class="tagline">Designer by instinct. Coder by discipline. Building AI before the degree.</p>
+            <div class="hero-cta">
+                <a href="#projects" class="btn btn-solid">View Projects</a>
+                <a href="#contact" class="btn btn-ghost">Contact Me</a>
+            </div>
+        </div>
+
+        <div class="scroll-hint" aria-hidden="true">SCROLL ⌄</div>
+    </main>
+
+    <nav>
+        <a href="#about">About Me</a>
+        <a href="#projects">Projects</a>
+        <a href="#supporter">Supporter</a>
+        <a href="#contact">Contact Me</a>
+    </nav>
+
+    <section id="about">
+        <h2>About Me</h2>
+        <div class="about-toggle">
+            <button id="btn-professional" class="active">Professional</button>
+            <button id="btn-childish">Childish</button>
+        </div>
+
+        <!-- Professional Content -->
+        <div id="about-professional" class="about-content show">
+            <span class="about-emoji" role="img" aria-label="Professional">💼</span>
+            <div class="about-text">
+                <p>
+                    I’m Muhammad Umer Khan — a self-taught designer, developer, and builder with a passion for
+                    turning ideas into
+                    working systems. My journey hasn’t been linear: I paused academics for four years to commit to a
+                    higher
+                    purpose, and came back with sharper focus and resilience.
+
+                </p>
+                <p>
+                    Since then, I’ve been learning across design, web development, AI, and automation — not
+                    through classrooms,
+                    but through building. From crafting interfaces to experimenting with offline AI assistants inspired
+                    by JARVIS,
+                    I’ve discovered how to connect creativity with code.
+                </p>
+                <P>
+                    I’m not defined by one label. I’m a designer when I need aesthetics, a developer when I
+                    need function,
+                    a problem-solver when I’m challenged, and a learner every single day. I thrive in solitude where I
+                    can
+                    create my best work, but I value collaboration that pushes boundaries.
+                </P>
+                <P>
+                    What drives me is curiosity — the ability to pick up a tool, learn it, and use it to build
+                    something
+                    meaningful.
+                    My portfolio is not a showcase of perfection, but a record of growth: projects tested, failed,
+                    improved,
+                    and shipped.
+                </P>
+                <P>
+                    I believe consistency beats talent, process shapes outcome, and with Allah’s guidance, no
+                    effort is wasted.
+                    staThis page isn’t a final portrait — it’s a mirror of my evolving journey.
+                </P>
+                <!-- keep rest of your professional content here -->
+            </div>
+        </div>
+
+        <!-- Childish Content -->
+        <div id="about-childish" class="about-content">
+            <span class="about-emoji" role="img" aria-label="Childish">🤪</span>
+            <div class="about-text">
+                <p>
+                    👋 Hey there, I'm Muhammad Umer Khan — just another guy trying to build the future... with a ⌨️
+                    keyboard, a 📱
+                    cracked
+                    screen, and countless half-finished projects 🛠️ that somehow lead to something meaningful 🌌.
+                </p>
+                <p>
+                    I don’t come from a shiny ✨ background or a family of engineers ⚙️. A few years ago, my academic
+                    path 📚 hit
+                    pause ⏸️ for
+                    nearly four years due to a deeply personal commitment 🙏. But with the mercy of Allah ☝️, I was
+                    chosen for
+                    something
+                    more meaningful than a school report card 📑. That time didn’t take me off track 🚉 — it rewired me
+                    🔌. I came
+                    back not
+                    behind… but with a sharper compass 🧭.
+                </p>
+                <p>
+                    Since then, I've been on a quiet mission 🤫: to learn how to build anything I imagine 💡. I’m not a
+                    master in
+                    any tool —
+                    not yet 🕰️. I haven’t written full production websites 🌐 or shipped polished software 📦 to users.
+                    But I’ve
+                    built things
+                    that work ⚡. And I’ve learned enough about design 🎨, development 💻, AI 🤖, and automation 🔄 to
+                    know which
+                    fruit 🍎 grows on
+                    which tree 🌳 — so when I need one, I can pluck it 🍋 and start peeling, instead of first Googling
+                    what a
+                    mango 🥭 even
+                    looks like.
+                </p>
+                <p>
+                    I’ve always believed that curiosity 🔍 is a superpower 🦸. If I don’t know something, give me a few
+                    hours ⏳
+                    (and maybe a
+                    🥪 sandwich), and I’ll figure it out. I’ve taught myself many things from programming 👨‍💻 to
+                    design 🖌️ to
+                    building offline AI
+                    assistants that can talk like Tony Stark’s JARVIS 🛰️ — not because I had to, but because I wanted
+                    to ❤️.
+                </p>
+                <p>
+                    I don’t fit in a neat label 🏷️. I’m a designer 🎨 when I’m inspired 💭, a developer 👨‍💻 when I’m
+                    challenged
+                    🏗️, a visionary 👁️
+                    when I dream 🌙, and a student 📖 every single day. I don’t build for likes 👍. I build because I
+                    need to get
+                    ideas 💡 out of my head
+                    before they explode 💥.
+                </p>
+                <p>
+                    I enjoy solitude 🌌, not because I’m antisocial 🚫👥, but because that’s when I create my best work
+                    ✍️. If
+                    you’ve ever stayed
+                    up till 3 AM 🌃 stuck on a bug 🐞 or perfecting a visual effect 🎬 with your headphones on 🎧 and
+                    the world
+                    turned off 🌍❌ —
+                    yeah, we’d get along 🤝.
+                </p>
+                <p>
+                    I don’t consider myself special 🌱. I just show up every day 🌞 — sometimes with clarity 🔮,
+                    sometimes in
+                    chaos 🌪️ — and keep
+                    going ➡️. That’s where growth 🌱 happens. That’s where you find your real self 🪞.
+                </p>
+                <p>
+                    Oh, and before you ask — yes, I’m single 💔. No, I’m not taking proposals 💍 unless it involves
+                    building a
+                    robot 🤖 together 🤓.
+                </p>
+                <p>
+                    This portfolio isn’t a trophy room 🏆. It’s a journal 📓. It’s what I’ve learned 📚, built 🔨, and
+                    explored
+                    🗺️. What I’ve tried 🏹,
+                    tested 🧪, failed at ❌, and figured out ✅. Whether you’re an admissions officer 🏛️, a future
+                    teammate 🤝, or
+                    a random visitor 🌍,
+                    I hope you see not just projects 💻 — but a pattern 🔄: someone who doesn’t wait for permission ⏱️
+                    to love ❤️,
+                    learn 📘, fail ❌,
+                    improve 🔧, and try again 🔁. If you're here reading this 👀, you're already part of my journey 🛤️.
+                    So thank
+                    you 🙏.
+                </p>
+                <p>
+                    As for the future 🔮? I don’t know where this road 🛣️ leads, but I know Who’s guiding me ☝️.
+                    <br>Let’s see how far we can go 🚀, in sha' Allah 🤲.
+                </p>
+                <p>
+                    Everything you see here — the projects 🖥️, the skills 🛠️, the supporters 👥, the failures 💔, the
+                    half-wins
+                    🌓 and hard-earned
+                    growth 🌳 — this is just the beginning 🌅. This page isn’t a finished portrait 🎨. It’s a moving
+                    mirror 🪞.
+                    I’m updating it as
+                    I evolve 🌀, because I believe in documenting the process 📔, not just the success 🏅.
+                </p>
+                <p>
+                    Some of these words may sound like hyperbole 📢 — maybe they are. But not because I want to impress
+                    you 👔. I
+                    write like
+                    the person I’m becoming 🌱, not the one I used to be ⏮️. This portfolio is a future version of
+                    myself 🔮,
+                    speaking through
+                    the present ⏳. I’m not here to show off 🚫✨ — I’m here to remind myself who I’m supposed to be 🌟.
+                </p>
+                <p>
+                    Come back sometime 🔄 — you might find a better version of me ✨ next time you scroll 📜.
+                </p>
+
+            </div>
+        </div>
+
+
+
+        <nav class="section-nav">
+            <a href="#">Home</a>
+            <a href="#projects">Projects</a>
+            <a href="#supporter">Supporter</a>
+            <a href="#contact">Contact Me</a>
+        </nav>
+    </section>
+
+
+    <section id="projects">
+        <h2>Projects</h2>
+        <div class="project-gallery">
+            <!-- Images -->
+            <div class="image-grid">
+                <h3>📸 Visual Projects</h3>
+
+                <!-- Floating Glassmorphism Notice Banner -->
+                <div class="portfolio-archive-overlay">
+                    <div class="portfolio-archive-content">
+                        <span class="portfolio-archive-icon">✦</span>
+                        <p class="portfolio-archive-text">
+                            <strong>Archival Notice:</strong> This portfolio is no longer actively maintained. Please be
+                            advised that the contained information, project documentation, and associated media assets
+                            may be outdated or unavailable. 
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <!-- Repeat for 22 images -->
+                    <img src="static/projects/1.bmp" alt="Project Image 1" loading="lazy" style="height: 200px;">
+                    <img src="static/projects/2.png" alt="Project Image 2" loading="lazy" style="height: 200px;">
+                    <img src="static/projects/3.png" alt="Project Image 3" loading="lazy" style="height: 200px;">
+                    <img src="static/projects/4.png" alt="Project Image 4" loading="lazy" style="height: 200px;">
+                    <img src="static/projects/5.png" alt="Project Image 5" loading="lazy" style="height: 200px;">
+                    <img src="static/projects/6.png" alt="Project Image 6" loading="lazy" style="height: 200px;">
+                    <img src="static/projects/7.png" alt="Project Image 7" loading="lazy" style="height: 200px;">
+                    <img src="static/projects/8.png" alt="Project Image 8" loading="lazy" style="height: 200px;">
+                    <img src="static/projects/9.png" alt="Project Image 9" loading="lazy" style="height: 200px;">
+                    <img src="static/projects/10.png" alt="Project Image 10" loading="lazy" style="height: 200px;">
+                    <img src="static/projects/11.png" alt="Project Image 11" loading="lazy" style="height: 200px;">
+                    <img src="static/projects/12.png" alt="Project Image 12" loading="lazy" style="height: 200px;">
+                    <img src="static/projects/13.png" alt="Project Image 13" loading="lazy" style="height: 200px;">
+                    <img src="static/projects/14.png" alt="Project Image 14" loading="lazy" style="height: 200px;">
+                    <img src="static/projects/15.png" alt="Project Image 15" loading="lazy" style="height: 200px;">
+                    <img src="static/projects/16.png" alt="Project Image 16" loading="lazy" style="height: 200px;">
+                    <img src="static/projects/17.png" alt="Project Image 17" loading="lazy" style="height: 200px;">
+                    <img src="static/projects/18.png" alt="Project Image 18" loading="lazy" style="height: 200px;">
+                    <img src="static/projects/20.png" alt="Project Image 20" loading="lazy" style="height: 200px;">
+                    <img src="static/projects/22.png" alt="Project Image 22" loading="lazy" style="height: 200px;">
+
+
+                    <!-- ... up to img22.jpg -->
+                </div>
+            </div>
+
+            <!-- Videos -->
+            <div class="video-grid">
+                <h3>🎥 Motion Projects</h3>
+                <h4 style="font-weight: 600; font-size: 1.2rem; color: #777777;">
+                    🔎 Tip: Switch to full-screen mode to enjoy the video in its original, uncropped format.
+                </h4>
+                <div class="grid">
+                    <iframe src="https://www.youtube.com/embed/a_yaN8EutSY" loading="lazy" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/NzX7vJMCVCo" loading="lazy" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/BIy3qUhRI8Y?start=1" loading="lazy"
+                        allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/utsgYN05D_o" loading="lazy" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/eKGXu0iVAo4" loading="lazy" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/MWzzQc7k-ok" loading="lazy" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/VvNs6C7uqvg" loading="lazy" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/O7CvCpiNLRk" loading="lazy" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/BWINUj9dLY8" loading="lazy" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/f_NyunBRQQY" loading="lazy" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/tipNbDKREXE" loading="lazy" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/FxMXOa6WIdE" loading="lazy" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/MaBk1yD9MuI" loading="lazy" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/uRcbYyRl1qI" loading="lazy" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/n8r9QpuEF-I" loading="lazy" allowfullscreen></iframe>
+                </div>
+
+            </div>
+        </div>
+        <nav class="section-nav">
+            <a href="#">Home</a>
+            <a href="#about">About Me</a>
+            <a href="#supporter">Supporter</a>
+            <a href="#contact">Contact Me</a>
+        </nav>
+    </section>
+
+
+    <section id="supporter">
+        <h2>Supporters</h2>
+
+        <div class="support-category">
+            <h3>🏫 Schools That Shaped Me</h3>
+            <ul>
+                <li>Karachi Public School – Safavi Campus</li>
+                <li>Iqra Qamar-ul-Atfal</li>
+            </ul>
+        </div>
+
+        <div class="support-category">
+            <h3>👨‍🏫 Teachers & Mentors</h3>
+            <ul>
+                <li>All the amazing teachers — past and present — who planted seeds of belief in me, even when I
+                    couldn’t see
+                    the tree yet.</li>
+                <li>My classmates, who weren’t just peers — they were quiet co-survivors of chaos, curiosity, and
+                    cramming.</li>
+            </ul>
+        </div>
+
+        <div class="support-category">
+            <h3>🎓 Tutorials & YouTube Channels</h3>
+            <ul>
+                <li><a href="https://www.youtube.com/@CodeWithHarry" target="_blank">CodeWithHarry</a></li>
+                <li><a href="https://www.youtube.com/@edurekaIN" target="_blank">edureka!</a></li>
+                <li><a href="https://www.youtube.com/@Nafay3D" target="_blank">Nafay 3D</a></li>
+            </ul>
+        </div>
+
+        <div class="support-category">
+            <h3>🛠️ Free Software That Empowered Me</h3>
+            <ul>
+                <li>Blender – for modeling what I once only imagined</li>
+                <li>Unreal Engine 5 – for building interactive worlds</li>
+                <li>VS Code – for turning chaos into code</li>
+                <li>Ollama – for local AI experiments on my own terms</li>
+            </ul>
+        </div>
+
+        <div class="support-category">
+            <h3>🤖 AI Tools That Pushed Me Forward</h3>
+            <ul>
+                <li>ChatGPT & OpenAI – my 24/7 brainstorming partner</li>
+                <li>Every free and open-source AI tool that exists </li>
+            </ul>
+        </div>
+
+        <div class="support-category">
+            <h3>💙 Personal Gratitude</h3>
+            <ul>
+                <li>To <strong>ALLAH</strong>, for always giving more than I ask</li>
+                <li>To my <strong>parents</strong>, for silent strength and prayers I’ll never hear but always feel</li>
+                <li>To <strong>ChatGPT</strong>, my oddly smart, always-patient AI partner who helped shape this entire
+                    journey
+                </li>
+            </ul>
+        </div>
+        <nav class="section-nav">
+            <a href="#">Home</a>
+            <a href="#about">About Me</a>
+            <a href="#projects">Projects</a>
+            <a href="#contact">Contact Me</a>
+        </nav>
+    </section>
+
+
+    <section id="contact">
+        <h2>Contact Me</h2>
+
+        <div class="contact-block">
+            <h3>📞 WhatsApp</h3>
+            <p><a href="https://wa.me/923410833363" target="_blank">+92 341 0833363</a></p>
+        </div>
+
+        <div class="contact-block">
+            <h3>📧 Email</h3>
+            <p><a href="mailto:mdotukhano@gmail.com">mdotukhano@gmail.com</a></p>
+        </div>
+
+        <div class="contact-block">
+            <h3>🛠️ Fiverr</h3>
+            <p><a href="https://www.fiverr.com/s/e6qLawk" target="_blank">Tony S</a> – Freelance Services</p>
+        </div>
+
+        <div class="contact-block">
+            <h3>💻 GitHub</h3>
+            <p><a href="https://github.com/mdotukhano" target="_blank">Umer Dev.</a></p>
+        </div>
+        <div class="contact-block">
+            <h3>🧠 YouTube</h3>
+            <a href="https://youtube.com/@blendit251" target="_blank">Blend_It</a>
+        </div>
+        <div class="contact-block">
+            <h3>📸 Instagram</h3>
+            <a href="http://instagram.com/mhumor7" target="_blank">M.HumorKhan</a>
+        </div>
+        <div class="contact-block">
+            <h3>🌟🎉Upgrade the view</h3>
+            <a href="https://mdotukhano.github.io" target="_blank">Back to New Portfolio</a>
+        </div>
+        <nav class="section-nav">
+            <a href="#">Home</a>
+            <a href="#about">About Me</a>
+            <a href="#projects">Projects</a>
+            <a href="#supporter">Supporter</a>
+        </nav>
+
+    </section>
+    <script>
+        const btnPro = document.getElementById("btn-professional");
+        const btnChi = document.getElementById("btn-childish");
+        const proContent = document.getElementById("about-professional");
+        const chiContent = document.getElementById("about-childish");
+
+        btnPro.addEventListener("click", () => {
+            btnPro.classList.add("active");
+            btnChi.classList.remove("active");
+            proContent.classList.add("show");
+            chiContent.classList.remove("show");
+        });
+
+        btnChi.addEventListener("click", () => {
+            btnChi.classList.add("active");
+            btnPro.classList.remove("active");
+            chiContent.classList.add("show");
+            proContent.classList.remove("show");
+        });
+
+        /* ===== SPLIT-IDENTITY HERO CONTROLLER ===== */
+        (function () {
+            const hero = document.getElementById('hero');
+            const handle = document.getElementById('divider-handle');
+            const left = document.getElementById('panel-left');
+            const right = document.getElementById('panel-right');
+            if (!hero || !handle) return;
+
+            let split = 50, dragging = false;
+            const isStacked = () => window.matchMedia('(max-width: 768px)').matches;
+
+            function setSplit(v) {
+                split = Math.max(24, Math.min(76, v));
+                hero.style.setProperty('--split', split.toFixed(2));
+            }
+            setSplit(50);
+
+            /* hover bias: each side leans toward the cursor (mouse + desktop only) */
+            left.addEventListener('mouseenter', () => {
+                if (!dragging && !isStacked()) setSplit(63);
+            });
+            right.addEventListener('mouseenter', () => {
+                if (!dragging && !isStacked()) setSplit(37);
+            });
+            hero.addEventListener('mouseleave', () => {
+                if (!dragging && !isStacked()) setSplit(50);
+            });
+
+            /* drag the handle to rebalance */
+            handle.addEventListener('pointerdown', e => {
+                if (isStacked()) return;
+                dragging = true;
+                hero.classList.add('dragging');
+                handle.setPointerCapture(e.pointerId);
+                e.preventDefault();
+            });
+            handle.addEventListener('pointermove', e => {
+                if (!dragging) return;
+                const r = hero.getBoundingClientRect();
+                setSplit(((e.clientX - r.left) / r.width) * 100);
+            });
+            ['pointerup', 'pointercancel'].forEach(ev => handle.addEventListener(ev, () => {
+                dragging = false;
+                hero.classList.remove('dragging');
+            }));
+
+            /* keyboard accessibility */
+            handle.addEventListener('keydown', e => {
+                if (e.key === 'ArrowLeft') { setSplit(split - 4); e.preventDefault(); }
+                else if (e.key === 'ArrowRight') { setSplit(split + 4); e.preventDefault(); }
+                else if (e.key === 'Home') { setSplit(50); e.preventDefault(); }
+            });
+
+            /* reset cleanly when crossing the mobile breakpoint */
+            window.addEventListener('resize', () => {
+                if (isStacked()) hero.style.removeProperty('--split');
+                else setSplit(split);
+            });
+        })();
+
+        /* ===== GRACEFUL FALLBACK FOR MISSING IMAGES ===== */
+        document.querySelectorAll('img').forEach(img => {
+            const handleFail = () => {
+                if (img.dataset.failed) return;
+                img.dataset.failed = '1';
+                if (img.closest('.grid')) {
+                    const ph = document.createElement('div');
+                    ph.className = 'img-ph';
+                    ph.textContent = img.alt || 'Image coming soon';
+                    img.replaceWith(ph);
+                } else {
+                    img.style.display = 'none';
+                }
+            };
+            img.addEventListener('error', handleFail);
+            if (img.complete && img.naturalWidth === 0) handleFail();
+        });
+    </script>
+
+</body>
+
+</html>
